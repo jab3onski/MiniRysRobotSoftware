@@ -72,7 +72,7 @@ void SPIBus::transfer(const std::vector<SPITransfer>& transfersData) {
 	if (!this->ok()) {
 		throw std::runtime_error(std::string("SPI bus was not initialized successfully"));
 	}
-			    std::cout << "TEST11111"<<std::endl;
+			    //std::cout << "TEST11111"<<std::endl;
 
 
 	std::vector<spi_ioc_transfer> rawTransfers;
@@ -87,8 +87,8 @@ void SPIBus::transfer(const std::vector<SPITransfer>& transfersData) {
 		rawTransfer.delay_usecs = 0;
 		rawTransfer.bits_per_word = 8;
 		rawTransfer.cs_change = 0;
-		    std::cout << "TEST1"<<std::endl;
-		    std::cout << rawTransfer<<std::endl;
+		    //std::cout << "TEST1"<<std::endl;
+		    //std::cout << rawTransfer<<std::endl;
 
 		rawTransfers.emplace_back(rawTransfer);
 	}

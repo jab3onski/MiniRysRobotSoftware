@@ -27,12 +27,13 @@ int main() {
 
 	driver.resetDevice();
 	// Set 62.5kHz PWM frequency
-	driver.setOscillatorMode(L6470::OSC_MODE_INT_16MHZ_OSCOUT_16MHZ);
+	driver.setOscillatorMode(L6470::OSC_MODE_INT_16MHZ_OSCOUT_16MHZ, 1); // << first chip
+	driver.setOscillatorMode(L6470::OSC_MODE_EXT_16MHZ_OSCOUT_INVERT, 0); // << last chip
 	driver.setPWMFrequency(L6470::PWM_DIV_1, L6470::PWM_MULT_2);
 	// Other CONFIG register values
 	driver.setSlewRate(L6470::SLEW_RATE_260V_US);
-	driver.setOCShutdown(true);
-	driver.setVoltageCompensation(false);
+	//driver.setOCShutdown(true);
+	//driver.setVoltageCompensation(false);
 	driver.setSwitchMode(L6470::SWITCH_MODE_USER);
 	// Setup stepping, speeds etc
 	driver.configStepMode(L6470::STEP_MODE_64);
@@ -42,16 +43,16 @@ int main() {
 	driver.setAcceleration(8000);
 	driver.setDeceleration(8000);
 	// Current/voltage settings
-	driver.setOCThreshold(2000);
-	driver.setAccelerationKVAL(0x96);
-	driver.setDecelerationKVAL(0x96);
-	driver.setRunKVAL(0x96);
-	driver.setHoldKVAL(0x32);
+	//driver.setOCThreshold(2000); << this doesn't work as expected
+	driver.setAccelerationKVAL(0x25);
+	driver.setDecelerationKVAL(0x25);
+	driver.setRunKVAL(0x25);
+	driver.setHoldKVAL(0x10);
 	// Disable BEMF compensation and the FLAG (alarm) pin
 	driver.setParam(L6470::REG_ADDR_ST_SLP, 0x00);
 	driver.setParam(L6470::REG_ADDR_FN_SLP_ACC, 0x00);
 	driver.setParam(L6470::REG_ADDR_FN_SLP_DEC, 0x00);
-	driver.setParam(L6470::REG_ADDR_ALARM_EN, 0x00);
+	//driver.setParam(L6470::REG_ADDR_ALARM_EN, 0x00);
 
 	bool direction = true;
 
@@ -72,9 +73,9 @@ int main() {
 		auto positions = driver.getPosition();
 
 		// get status
-		std::cout << "\t motor: APos _hiZ busy _dir cmdN cmdW UVlo thwr thsd __oc stlA stlB scka" << std::endl;
+		std::cout << "Positions: 0: " << positions[0] << " | 1: " << positions[1] << std::endl;
+		std::cout << "\t motor: _hiZ busy _dir cmdN cmdW UVlo thwr thsd __oc stlA stlB scka" << std::endl;
 		std::cout << "\t     0: "
-			<< std::setfill(' ') << std::setw(5) << positions[0]
 			<< std::setfill(' ') << std::setw(5) << (int)statuses[0].hiZ
 			<< std::setfill(' ') << std::setw(5) << (int)statuses[0].busy
 			<< std::setfill(' ') << std::setw(5) << (int)statuses[0].direction
@@ -89,7 +90,6 @@ int main() {
 			<< std::setfill(' ') << std::setw(5) << (int)statuses[0].stepClockActive
 			<< std::endl;
 		std::cout << "\t     1: "
-			<< std::setfill(' ') << std::setw(5) << positions[1]
 			<< std::setfill(' ') << std::setw(5) << (int)statuses[1].hiZ
 			<< std::setfill(' ') << std::setw(5) << (int)statuses[1].busy
 			<< std::setfill(' ') << std::setw(5) << (int)statuses[1].direction
@@ -107,7 +107,7 @@ int main() {
 		driver.run(speeds,  direction ? dirs : dirs2);
 
 		direction = !direction;
-		std::this_thread::sleep_for(10s);
+		std::this_thread::sleep_for(4s);
 	}
 
 	std::cout << "\t soft reset" << std::endl;

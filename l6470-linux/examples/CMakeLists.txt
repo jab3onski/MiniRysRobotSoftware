@@ -1,3 +1,4 @@
+#[===[
 add_executable(example1
   example1.cpp
 )
@@ -9,5 +10,13 @@ add_executable(example2
   example2.cpp
 )
 target_link_libraries(example2
+  PRIVATE l6470-linux
+)
+]===]
+
+add_executable(example3
+  example3.cpp
+)
+target_link_libraries(example3
   PRIVATE l6470-linux
 )
