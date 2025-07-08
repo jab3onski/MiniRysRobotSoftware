@@ -47,8 +47,10 @@ MotorsNode::MotorsNode(rclcpp::NodeOptions options):
 	this->motors->setPWMFrequency(L6470_CONFIG_PWM_INT_DIV_1, L6470_CONFIG_PWM_DEC_MUL_2);
 	// Other CONFIG register values
 	this->motors->setPowSlewRate(L6470_CONFIG_POW_SR_260V_us);
-	this->motors->setOverCurrentShutdown(L6470_CONFIG_OC_SD_DISABLE);
+	this->motors->setOverCurrentShutdown(L6470_CONFIG_OC_SD_ENABLE);
+	// ^ OC bridge shutdown enabled, so the bridge gets safely disabled in case of an overcurrent event
 	this->motors->setVoltageCompensation(TL6470_CONFIG_VS_COMP_DISABLE);
+	// ^ Vs compensation enabled, as the voltage should be at stable 24V
 	this->motors->setSwitchModeConfig(TL6470_CONFIG_SW_MODE_USER);
 	// Setup stepping, speeds etc
 	this->motors->configStepSelMode(L6470_STEP_SEL_1_64);
@@ -63,12 +65,13 @@ MotorsNode::MotorsNode(rclcpp::NodeOptions options):
 	this->motors->setDeceleration(accelerationSPS);
     RCLCPP_INFO_STREAM(this->get_logger(), "Got param: Deceleration " << accelerationSPS);
 	// Current/voltage settings
-	this->motors->setOverCurrentThreshold(L6470_OCD_TH_3000mA);
+	this->motors->setOverCurrentThreshold(L6470_OCD_TH_2250mA); 
+	// ^ all-black new motors have 1A limit per winding, so safe value would be around 2000mA peak
     //this->motors->setStallThreshold(0x40);
-	this->motors->setAccCurrentKVAL(0x70);  //80
-	this->motors->setDecCurrentKVAL(0x70);  //80
-	this->motors->setRunCurrentKVAL(0x70);  //B4 70
-	this->motors->setHoldCurrentKVAL(0x16);  //40
+	this->motors->setAccCurrentKVAL(0x2A);  // around 1A on Vs = 24V
+	this->motors->setDecCurrentKVAL(0x2A);  // around 1A on Vs = 24V
+	this->motors->setRunCurrentKVAL(0x2A);  // around 1A on Vs = 24V
+	this->motors->setHoldCurrentKVAL(0x15); // around 0.5A on Vs = 24V
 	// Disable BEMF compensation and the FLAG (alarm) pin
 	this->motors->setBackEMF();
 	RCLCPP_INFO_STREAM(this->get_logger(), "L6470: setup done");
