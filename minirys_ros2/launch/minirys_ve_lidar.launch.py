@@ -39,7 +39,7 @@ def generate_launch_description():
 	return LaunchDescription([
 		arg_namespace,
 		node_ve,
-		node_servo,
+		#node_servo,
 		get_shutdown_on_exit(node_ve),
-		get_shutdown_on_exit(node_servo),
+		#get_shutdown_on_exit(node_servo),
 	])

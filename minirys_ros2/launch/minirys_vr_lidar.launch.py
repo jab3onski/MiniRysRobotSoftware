@@ -39,7 +39,7 @@ def generate_launch_description():
 	return LaunchDescription([
 		arg_namespace,
 		node_vr,
-		ldlidar_node,
+		#ldlidar_node,
 		get_shutdown_on_exit(node_vr),
-		get_shutdown_on_exit(ldlidar_node),
+		#get_shutdown_on_exit(ldlidar_node),
 	])
